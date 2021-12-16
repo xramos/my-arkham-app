@@ -9,4 +9,9 @@ import Foundation
 
 protocol Persistence {
      
+    func savePack(pack: Pack)
+    
+    func removePack(pack: Pack)
+    
+    func getPacks() -> [Pack]
 }
