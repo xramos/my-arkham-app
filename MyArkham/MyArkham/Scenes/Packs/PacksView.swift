@@ -13,33 +13,46 @@ struct PacksView: View {
     
     var body: some View {
         
-        VStack(alignment: .center) {
+        ZStack {
             
-            Image("logo")
-                .resizable()
-                .frame(width: 300, height: 100, alignment: .center)
+            Color.accentColor
+                .ignoresSafeArea()
             
-            ScrollView {
+            VStack {
+                
+                Image("logo")
+                    .resizable()
+                    .frame(width: 300, height: 100, alignment: .center)
                 
                 if viewModel.showProgressView {
                     
                     ProgressView("Loading")
+                        .background(Color.white)
                 }
                 
-                ForEach(viewModel.packs) { pack in
+                ScrollView {
                     
-                    NavigationLink(destination: PackDetailView(viewModel: PackDetailViewModel(pack: pack))) {
+                    ForEach(viewModel.packs) { pack in
                         
-                        PackCellView(pack: pack)
+                        NavigationLink(destination: PackDetailView(viewModel: PackDetailViewModel(pack: pack))) {
+                            
+                            PackCellView(pack: pack)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
+                .background(Color.white)
+                .cornerRadius(10)
+                .padding([.leading, .trailing], 16)
             }
+            .background(Color.clear)
             
         }.onAppear {
             
             viewModel.getCards()
         }
+        .navigationBarTitle("")
+        .navigationTitle("")
     }
 }
 
