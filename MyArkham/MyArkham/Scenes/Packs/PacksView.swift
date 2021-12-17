@@ -28,7 +28,7 @@ struct PacksView: View {
                 
                 ForEach(viewModel.packs) { pack in
                     
-                    Text(pack.name)
+                    PackCellView(pack: pack)
                 }
             }
             
