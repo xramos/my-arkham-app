@@ -264,7 +264,7 @@ class DBManager: Persistence {
         let packCode = pack.code
         
         let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
-        fetchRequest.predicate = NSPredicate(format: "packCode==\(packCode)")
+        fetchRequest.predicate = NSPredicate(format: "packCode==%@", packCode)
         
         do {
             
@@ -287,10 +287,10 @@ class DBManager: Persistence {
         
         var cards: [Card] = []
         
-        let factionCode = faction.code
+        let fCode = faction.code
         
         let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
-        fetchRequest.predicate = NSPredicate(format: "factionCode==\(factionCode)")
+        fetchRequest.predicate = NSPredicate(format: "factionCode==%@", fCode)
         
         do {
             

@@ -28,7 +28,11 @@ struct FactionsView: View {
                 
                 ForEach(viewModel.factions) { faction in
                     
-                    FactionCellView(faction: faction)
+                    NavigationLink(destination: FactionDetailView(viewModel: FactionDetailViewModel(faction: faction))) {
+                        
+                        FactionCellView(faction: faction)
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             
