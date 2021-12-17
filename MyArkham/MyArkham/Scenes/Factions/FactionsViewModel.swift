@@ -15,15 +15,38 @@ class FactionsViewModel: ObservableObject {
     @Published public private(set) var factions: [Faction] = []
     @Published public private(set) var showProgressView = false
     
-    private var cancellable: AnyCancellable?
+    private var cardCancellale: AnyCancellable?
+    private var factionCancellable: AnyCancellable?
     
     // MARK: - Methods
     
-    func getFactions() {
+    func getCards() {
         
         showProgressView = true
         
-        cancellable = GetFactionsUseCase().execute()
+        cardCancellale = GetCardsUseCase().execute()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { completion in
+                
+                self.getFactions()
+                
+                switch completion {
+                case .finished:
+                    break
+                case .failure:
+                    break
+                }
+                
+            }, receiveValue: { (cards: [Card]) in
+                
+                // We don't do anything here
+                print("")
+            })
+    }
+    
+    func getFactions() {
+        
+        factionCancellable = GetFactionsUseCase().execute()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 

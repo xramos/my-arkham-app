@@ -1,10 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19206" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="DBAtLeast" representedClassName="DBAtLeast" syncable="YES" codeGenerationType="class">
+        <attribute name="factions" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="min" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="deckOption" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBDeckOption" inverseName="atleast" inverseEntity="DBDeckOption"/>
+    </entity>
+    <entity name="DBCard" representedClassName="DBCard" syncable="YES" codeGenerationType="class">
+        <attribute name="backFlavor" optional="YES" attributeType="String"/>
+        <attribute name="backimagescr" optional="YES" attributeType="String"/>
+        <attribute name="backText" optional="YES" attributeType="String"/>
+        <attribute name="code" optional="YES" attributeType="String"/>
+        <attribute name="cost" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="deckLimit" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="doubleSided" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="duplicatedBy" optional="YES" attributeType="String"/>
+        <attribute name="exceptional" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="factionCode" optional="YES" attributeType="String"/>
+        <attribute name="factionName" optional="YES" attributeType="String"/>
+        <attribute name="flavor" optional="YES" attributeType="String"/>
+        <attribute name="health" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="healthPerInvestigator" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="imagesrc" optional="YES" attributeType="String"/>
+        <attribute name="isUnique" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="packCode" optional="YES" attributeType="String"/>
+        <attribute name="packName" optional="YES" attributeType="String"/>
+        <attribute name="permanent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="position" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="quantity" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="realName" optional="YES" attributeType="String"/>
+        <attribute name="realSlot" optional="YES" attributeType="String"/>
+        <attribute name="realText" optional="YES" attributeType="String"/>
+        <attribute name="realTraits" optional="YES" attributeType="String"/>
+        <attribute name="sanity" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="skillAgility" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="skillCombat" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="skillIntelect" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="skillWild" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="skillWillpower" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="slot" optional="YES" attributeType="String"/>
+        <attribute name="subname" optional="YES" attributeType="String"/>
+        <attribute name="subtypeCode" optional="YES" attributeType="String"/>
+        <attribute name="subtypeName" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="traits" optional="YES" attributeType="String"/>
+        <attribute name="typeCode" optional="YES" attributeType="String"/>
+        <attribute name="typeName" optional="YES" attributeType="String"/>
+        <attribute name="xp" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="deckOptions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DBDeckOption" inverseName="card" inverseEntity="DBDeckOption"/>
+    </entity>
+    <entity name="DBDeckOption" representedClassName="DBDeckOption" syncable="YES" codeGenerationType="class">
+        <attribute name="faction" optional="YES" attributeType="String"/>
+        <attribute name="limit" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="not" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="trait" optional="YES" attributeType="String"/>
+        <attribute name="uses" optional="YES" attributeType="String"/>
+        <relationship name="atleast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBAtLeast" inverseName="deckOption" inverseEntity="DBAtLeast"/>
+        <relationship name="card" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBCard" inverseName="deckOptions" inverseEntity="DBCard"/>
+        <relationship name="level" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBLevel" inverseName="deckOption" inverseEntity="DBLevel"/>
+    </entity>
     <entity name="DBFaction" representedClassName="DBFaction" syncable="YES" codeGenerationType="class">
         <attribute name="code" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="isPrimary" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="DBLevel" representedClassName="DBLevel" syncable="YES" codeGenerationType="class">
+        <attribute name="max" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="min" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="deckOption" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBDeckOption" inverseName="level" inverseEntity="DBDeckOption"/>
     </entity>
     <entity name="DBPack" representedClassName="DBPack" syncable="YES" codeGenerationType="class">
         <attribute name="available" optional="YES" attributeType="String"/>
@@ -16,7 +81,11 @@
         <attribute name="total" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <elements>
-        <element name="DBPack" positionX="-63" positionY="-18" width="128" height="134"/>
         <element name="DBFaction" positionX="-63" positionY="36" width="128" height="89"/>
+        <element name="DBPack" positionX="-63" positionY="-18" width="128" height="134"/>
+        <element name="DBLevel" positionX="-54" positionY="45" width="128" height="74"/>
+        <element name="DBDeckOption" positionX="-36" positionY="54" width="128" height="149"/>
+        <element name="DBCard" positionX="-18" positionY="72" width="128" height="674"/>
+        <element name="DBAtLeast" positionX="0" positionY="180" width="128" height="74"/>
     </elements>
 </model>

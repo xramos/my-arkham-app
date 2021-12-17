@@ -34,7 +34,7 @@ struct FactionsView: View {
             
         }.onAppear {
             
-            viewModel.getFactions()
+            viewModel.getCards()
         }
     }
 }

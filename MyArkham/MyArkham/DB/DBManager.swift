@@ -139,4 +139,173 @@ class DBManager: Persistence {
         
         return factions
     }
+    
+    // MARK: - Card Methods
+    
+    func saveCard(card: Card) {
+        
+        let context = coreDataStack.managedContext
+        
+        var dbDeckOptions: [DBDeckOption] = []
+        
+        if let deckOptions = card.deckOptions {
+            
+            for deckOption in deckOptions {
+                
+                let dbLevel = DBLevel(context: context)
+                dbLevel.min = Int16(deckOption.level?.min ?? 0)
+                dbLevel.max = Int16(deckOption.level?.max ?? 0)
+                
+                let dbAtLeast = DBAtLeast(context: context)
+                dbAtLeast.factions = Int16(deckOption.atleast?.factions ?? 0)
+                dbAtLeast.min = Int16(deckOption.atleast?.min ?? 0)
+                
+                let factions = deckOption.faction?.joined(separator: ",")
+                let tr = deckOption.trait?.joined(separator: ",")
+                let use = deckOption.uses?.joined(separator: ",")
+                
+                let dbDeckOption = DBDeckOption(context: context)
+                dbDeckOption.faction = factions
+                dbDeckOption.level = dbLevel
+                dbDeckOption.trait = tr
+                dbDeckOption.uses = use
+                dbDeckOption.limit = Int16(deckOption.limit ?? 0)
+                dbDeckOption.atleast = dbAtLeast
+                dbDeckOption.not = deckOption.not ?? false
+                
+                dbDeckOptions.append(dbDeckOption)
+            }
+        }
+        
+        let duplicated = card.duplicatedBy?.joined(separator: ",")
+        
+        let dbCard = DBCard(context: context)
+        dbCard.id = card.id
+        dbCard.code = card.code
+        dbCard.name = card.name
+        dbCard.realName = card.realName
+        dbCard.subname = card.subname
+        dbCard.text = card.text
+        dbCard.realText = card.realText
+        dbCard.packCode = card.packCode
+        dbCard.packName = card.packName
+        dbCard.factionCode = card.factionCode
+        dbCard.factionName = card.factionName
+        dbCard.typeCode = card.typeCode
+        dbCard.typeName = card.typeName
+        dbCard.subtypeCode = card.subtypeCode
+        dbCard.subtypeName = card.subtypeName
+        dbCard.position = Int64(card.position)
+        dbCard.exceptional = card.exceptional
+        dbCard.cost = Int16(card.cost ?? 0)
+        dbCard.xp = Int16(card.xp ?? 0)
+        dbCard.quantity = Int16(card.quantity)
+        dbCard.skillWillpower = Int16(card.skillWillpower ?? 0)
+        dbCard.skillIntelect = Int16(card.skillIntelect ?? 0)
+        dbCard.skillCombat = Int16(card.skillCombat ?? 0)
+        dbCard.skillAgility = Int16(card.skillAgility ?? 0)
+        dbCard.skillWild = Int16(card.skillWild ?? 0)
+        dbCard.healthPerInvestigator = card.healthPerInvestigator
+        dbCard.health = Int16(card.health ?? 0)
+        dbCard.sanity = Int16(card.sanity ?? 0)
+        dbCard.deckLimit = Int16(card.deckLimit ?? 0)
+        dbCard.slot = card.slot
+        dbCard.realSlot = card.realSlot
+        dbCard.traits = card.traits
+        dbCard.realTraits = card.realTraits
+        
+        if dbDeckOptions.count > 0 {
+            dbCard.deckOptions?.addingObjects(from: dbDeckOptions)
+        }
+        
+        dbCard.flavor = card.flavor
+        dbCard.isUnique = card.isUnique
+        dbCard.permanent = card.permanent
+        dbCard.doubleSided = card.doubleSided
+        dbCard.backText = card.backText
+        dbCard.backFlavor = card.backFlavor
+        dbCard.imagesrc = card.imagesrc
+        dbCard.backimagescr = card.backimagesrc
+        dbCard.duplicatedBy = duplicated
+        
+        context.perform { [self] in
+            
+            self.coreDataStack.saveContext()
+        }
+    }
+    
+    func getCards() -> [Card] {
+        
+        var cards: [Card] = []
+        
+        let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
+        
+        do {
+            
+            let dbCards = try coreDataStack.managedContext.fetch(fetchRequest)
+            
+            for dbCard in dbCards {
+                let dbCard = dbCard.convertToEntity()
+                cards.append(dbCard)
+            }
+            
+        } catch let error as NSError {
+            
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+        
+        return cards
+    }
+    
+    func getCardsByPack(pack: Pack) -> [Card] {
+        
+        var cards: [Card] = []
+        
+        let packCode = pack.code
+        
+        let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
+        fetchRequest.predicate = NSPredicate(format: "packCode==\(packCode)")
+        
+        do {
+            
+            let dbCards = try coreDataStack.managedContext.fetch(fetchRequest)
+            
+            for dbCard in dbCards {
+                let dbCard = dbCard.convertToEntity()
+                cards.append(dbCard)
+            }
+            
+        } catch let error as NSError {
+            
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+        
+        return cards
+    }
+    
+    func getCardsByFaction(faction: Faction) -> [Card] {
+        
+        var cards: [Card] = []
+        
+        let factionCode = faction.code
+        
+        let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
+        fetchRequest.predicate = NSPredicate(format: "factionCode==\(factionCode)")
+        
+        do {
+            
+            let dbCards = try coreDataStack.managedContext.fetch(fetchRequest)
+            
+            for dbCard in dbCards {
+                let dbCard = dbCard.convertToEntity()
+                cards.append(dbCard)
+            }
+            
+        } catch let error as NSError {
+            
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+        
+        return cards
+    }
 }

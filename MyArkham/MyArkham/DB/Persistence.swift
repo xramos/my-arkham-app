@@ -20,4 +20,12 @@ protocol Persistence {
     func removefaction(faction: Faction)
     
     func getFactions() -> [Faction]
+    
+    func saveCard(card: Card)
+    
+    func getCards() -> [Card]
+    
+    func getCardsByPack(pack: Pack) -> [Card]
+    
+    func getCardsByFaction(faction: Faction) -> [Card]
 }
