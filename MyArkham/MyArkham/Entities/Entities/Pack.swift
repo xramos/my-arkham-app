@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Pack {
+struct Pack: Identifiable {
     
     let id: Int
     let name: String

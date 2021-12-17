@@ -36,9 +36,13 @@ class PackRepositoryImplementation: PackRepository {
                 
                 var packs: [Pack] = []
                 
-                // Convert soaentities to entities
+                // Convert soaentities to entities and save to Core Data
                 for serverPack in serverPacks {
+                    
                     let pack = serverPack.convertToEntity()
+                    
+                    self.localDataSource.savePack(pack: pack)
+                    
                     packs.append(pack)
                 }
                 

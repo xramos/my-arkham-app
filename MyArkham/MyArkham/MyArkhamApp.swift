@@ -16,7 +16,7 @@ struct MyArkhamApp: App {
             
             NavigationView {
             
-                EmptyView()
+                PacksView(viewModel: PacksViewModel())
             }
         }
     }
