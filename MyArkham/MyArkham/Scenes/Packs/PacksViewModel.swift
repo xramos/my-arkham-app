@@ -15,15 +15,38 @@ class PacksViewModel: ObservableObject {
     @Published public private(set) var packs: [Pack] = []
     @Published public private(set) var showProgressView = false
     
-    private var cancellable: AnyCancellable?
+    private var cardCancellable: AnyCancellable?
+    private var packCancellable: AnyCancellable?
     
     // MARK: - Methods
     
-    func getPacks() {
+    func getCards() {
         
         showProgressView = true
         
-        cancellable = GetPacksUseCase().execute()
+        cardCancellable = GetCardsUseCase().execute()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { completion in
+                
+                self.getPacks()
+                
+                switch completion {
+                case .finished:
+                    break
+                case .failure:
+                    break
+                }
+                
+            }, receiveValue: { (cards: [Card]) in
+                
+                // We don't do anything here
+                print("")
+            })
+    }
+    
+    func getPacks() {
+        
+        packCancellable = GetPacksUseCase().execute()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 

@@ -1,5 +1,5 @@
 //
-//  FactionDetailView.swift
+//  PackDetailView.swift
 //  MyArkham
 //
 //  Created by Xavi on 17/12/21.
@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct FactionDetailView: View {
+struct PackDetailView: View {
     
-    @StateObject var viewModel: FactionDetailViewModel
+    @StateObject var viewModel: PackDetailViewModel
     
     var body: some View {
         
@@ -36,14 +36,17 @@ struct FactionDetailView: View {
     }
 }
 
-struct FactionDetailView_Previews: PreviewProvider {
+struct PackDetailView_Previews: PreviewProvider {
     
     static var previews: some View {
         
-        let faction = Faction(id: "1",
-                              code: "code",
-                              name: "name",
-                              isPrimary: true)
-        FactionDetailView(viewModel: FactionDetailViewModel(faction: faction))
+        let pack = Pack(id: 1,
+                        name: "name",
+                        code: "code",
+                        position: 0,
+                        cyclePosition: 0,
+                        available: "available",
+                        total: 1)
+        PackDetailView(viewModel: PackDetailViewModel(pack: pack))
     }
 }

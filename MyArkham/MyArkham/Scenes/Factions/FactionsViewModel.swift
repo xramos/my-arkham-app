@@ -15,7 +15,7 @@ class FactionsViewModel: ObservableObject {
     @Published public private(set) var factions: [Faction] = []
     @Published public private(set) var showProgressView = false
     
-    private var cardCancellale: AnyCancellable?
+    private var cardCancellable: AnyCancellable?
     private var factionCancellable: AnyCancellable?
     
     // MARK: - Methods
@@ -24,7 +24,7 @@ class FactionsViewModel: ObservableObject {
         
         showProgressView = true
         
-        cardCancellale = GetCardsUseCase().execute()
+        cardCancellable = GetCardsUseCase().execute()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 

@@ -3,7 +3,6 @@
     <entity name="DBAtLeast" representedClassName="DBAtLeast" syncable="YES" codeGenerationType="class">
         <attribute name="factions" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="min" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="deckOption" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBDeckOption" inverseName="atleast" inverseEntity="DBDeckOption"/>
     </entity>
     <entity name="DBCard" representedClassName="DBCard" syncable="YES" codeGenerationType="class">
         <attribute name="backFlavor" optional="YES" attributeType="String"/>
@@ -48,7 +47,7 @@
         <attribute name="typeCode" optional="YES" attributeType="String"/>
         <attribute name="typeName" optional="YES" attributeType="String"/>
         <attribute name="xp" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="deckOptions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DBDeckOption" inverseName="card" inverseEntity="DBDeckOption"/>
+        <relationship name="deckOptions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DBDeckOption"/>
     </entity>
     <entity name="DBDeckOption" representedClassName="DBDeckOption" syncable="YES" codeGenerationType="class">
         <attribute name="faction" optional="YES" attributeType="String"/>
@@ -56,9 +55,8 @@
         <attribute name="not" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="trait" optional="YES" attributeType="String"/>
         <attribute name="uses" optional="YES" attributeType="String"/>
-        <relationship name="atleast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBAtLeast" inverseName="deckOption" inverseEntity="DBAtLeast"/>
-        <relationship name="card" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBCard" inverseName="deckOptions" inverseEntity="DBCard"/>
-        <relationship name="level" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBLevel" inverseName="deckOption" inverseEntity="DBLevel"/>
+        <relationship name="atleast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBAtLeast"/>
+        <relationship name="level" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBLevel"/>
     </entity>
     <entity name="DBFaction" representedClassName="DBFaction" syncable="YES" codeGenerationType="class">
         <attribute name="code" optional="YES" attributeType="String"/>
@@ -69,7 +67,6 @@
     <entity name="DBLevel" representedClassName="DBLevel" syncable="YES" codeGenerationType="class">
         <attribute name="max" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="min" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="deckOption" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DBDeckOption" inverseName="level" inverseEntity="DBDeckOption"/>
     </entity>
     <entity name="DBPack" representedClassName="DBPack" syncable="YES" codeGenerationType="class">
         <attribute name="available" optional="YES" attributeType="String"/>
@@ -83,9 +80,9 @@
     <elements>
         <element name="DBFaction" positionX="-63" positionY="36" width="128" height="89"/>
         <element name="DBPack" positionX="-63" positionY="-18" width="128" height="134"/>
-        <element name="DBLevel" positionX="-54" positionY="45" width="128" height="74"/>
-        <element name="DBDeckOption" positionX="-36" positionY="54" width="128" height="149"/>
+        <element name="DBLevel" positionX="-54" positionY="45" width="128" height="59"/>
+        <element name="DBDeckOption" positionX="-36" positionY="54" width="128" height="134"/>
         <element name="DBCard" positionX="-18" positionY="72" width="128" height="674"/>
-        <element name="DBAtLeast" positionX="0" positionY="180" width="128" height="74"/>
+        <element name="DBAtLeast" positionX="0" positionY="180" width="128" height="59"/>
     </elements>
 </model>

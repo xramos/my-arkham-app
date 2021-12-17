@@ -57,6 +57,11 @@ class CardRepositoryImplementation: CardRepository {
         }
     }
     
+    func getAllCards() -> [Card] {
+        
+        return localDataSource.getCards()
+    }
+    
     func getCardsByPack(pack: Pack) -> [Card] {
         
         return localDataSource.getCardsByPack(pack: pack)

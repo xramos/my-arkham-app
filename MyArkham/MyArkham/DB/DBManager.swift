@@ -151,27 +151,35 @@ class DBManager: Persistence {
         if let deckOptions = card.deckOptions {
             
             for deckOption in deckOptions {
-                
-                let dbLevel = DBLevel(context: context)
-                dbLevel.min = Int16(deckOption.level?.min ?? 0)
-                dbLevel.max = Int16(deckOption.level?.max ?? 0)
-                
-                let dbAtLeast = DBAtLeast(context: context)
-                dbAtLeast.factions = Int16(deckOption.atleast?.factions ?? 0)
-                dbAtLeast.min = Int16(deckOption.atleast?.min ?? 0)
-                
+
                 let factions = deckOption.faction?.joined(separator: ",")
                 let tr = deckOption.trait?.joined(separator: ",")
                 let use = deckOption.uses?.joined(separator: ",")
                 
                 let dbDeckOption = DBDeckOption(context: context)
                 dbDeckOption.faction = factions
-                dbDeckOption.level = dbLevel
                 dbDeckOption.trait = tr
                 dbDeckOption.uses = use
                 dbDeckOption.limit = Int16(deckOption.limit ?? 0)
-                dbDeckOption.atleast = dbAtLeast
                 dbDeckOption.not = deckOption.not ?? false
+                
+                if let level = deckOption.level {
+                    
+                    let dbLevel = DBLevel(context: context)
+                    dbLevel.min = Int16(level.min)
+                    dbLevel.max = Int16(level.max)
+                
+                    dbDeckOption.level = dbLevel
+                }
+                
+                if let atleast = deckOption.atleast {
+                    
+                    let dbAtLeast = DBAtLeast(context: context)
+                    dbAtLeast.factions = Int16(atleast.factions)
+                    dbAtLeast.min = Int16(atleast.min)
+                    
+                    dbDeckOption.atleast = dbAtLeast
+                }
                 
                 dbDeckOptions.append(dbDeckOption)
             }
@@ -264,7 +272,7 @@ class DBManager: Persistence {
         let packCode = pack.code
         
         let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
-        fetchRequest.predicate = NSPredicate(format: "packCode==%@", packCode)
+        fetchRequest.predicate = NSPredicate(format: "packCode == %@", packCode)
         
         do {
             
@@ -290,7 +298,7 @@ class DBManager: Persistence {
         let fCode = faction.code
         
         let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
-        fetchRequest.predicate = NSPredicate(format: "factionCode==%@", fCode)
+        fetchRequest.predicate = NSPredicate(format: "factionCode == %@", fCode)
         
         do {
             

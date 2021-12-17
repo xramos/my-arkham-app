@@ -1,5 +1,5 @@
 //
-//  FactionCardCellView.swift
+//  CardCellView.swift
 //  MyArkham
 //
 //  Created by Xavi on 17/12/21.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FactionCardCellView: View {
+struct CardCellView: View {
     
     var card: Card?
     
@@ -37,7 +37,7 @@ struct FactionCardCellView: View {
     }
 }
 
-struct FactionCardCellView_Previews: PreviewProvider {
+struct CardCellView_Previews: PreviewProvider {
     
     static var previews: some View {
         
@@ -84,6 +84,6 @@ struct FactionCardCellView_Previews: PreviewProvider {
                         imagesrc: nil,
                         backimagesrc: nil,
                         duplicatedBy: nil)
-        FactionCardCellView(card: card)
+        CardCellView(card: card)
     }
 }

@@ -28,13 +28,17 @@ struct PacksView: View {
                 
                 ForEach(viewModel.packs) { pack in
                     
-                    PackCellView(pack: pack)
+                    NavigationLink(destination: PackDetailView(viewModel: PackDetailViewModel(pack: pack))) {
+                        
+                        PackCellView(pack: pack)
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             
         }.onAppear {
             
-            viewModel.getPacks()
+            viewModel.getCards()
         }
     }
 }
