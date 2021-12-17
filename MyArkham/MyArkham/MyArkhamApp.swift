@@ -16,7 +16,8 @@ struct MyArkhamApp: App {
             
             NavigationView {
             
-                PacksView(viewModel: PacksViewModel())
+                FactionsView(viewModel: FactionsViewModel())
+                //PacksView(viewModel: PacksViewModel())
             }
         }
     }
