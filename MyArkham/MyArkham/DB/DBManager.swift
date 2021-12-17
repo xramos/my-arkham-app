@@ -81,4 +81,62 @@ class DBManager: Persistence {
         
         return packs
     }
+    
+    func saveFaction(faction: Faction) {
+        
+        let dbFaction = DBFaction(context: coreDataStack.managedContext)
+        
+        dbFaction.id = faction.id
+        dbFaction.name = faction.name
+        dbFaction.code = faction.code
+        dbFaction.isPrimary = faction.isPrimary
+        
+        coreDataStack.saveContext()
+    }
+    
+    func removefaction(faction: Faction) {
+        
+        let factionId = faction.id
+        
+        let fetchRequest = NSFetchRequest<DBFaction>(entityName: "DBFaction")
+        fetchRequest.predicate = NSPredicate(format: "id==\(factionId)")
+        
+        do {
+            
+            let dbFactions = try coreDataStack.managedContext.fetch(fetchRequest)
+            
+            for dbFaction in dbFactions {
+                coreDataStack.managedContext.delete(dbFaction)
+            }
+            
+            coreDataStack.saveContext()
+            
+        } catch let error as NSError {
+            
+            print("Could not fetch for delete. \(error), \(error.userInfo)")
+        }
+    }
+    
+    func getFactions() -> [Faction] {
+        
+        var factions: [Faction] = []
+        
+        let fetchRequest = NSFetchRequest<DBFaction>(entityName: "DBFaction")
+        
+        do {
+            
+            let dbFactions = try coreDataStack.managedContext.fetch(fetchRequest)
+            
+            for dbFaction in dbFactions {
+                let faction = dbFaction.convertToEntity()
+                factions.append(faction)
+            }
+            
+        } catch let error as NSError {
+            
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+        
+        return factions
+    }
 }
