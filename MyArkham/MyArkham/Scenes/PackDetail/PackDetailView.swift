@@ -25,7 +25,6 @@ struct PackDetailView: View {
                 Spacer()
                 
                 Text("Filter by Card Type: ")
-                    .bold()
                 
                 Picker("Filter by Card Type", selection: $selection) {
                                             

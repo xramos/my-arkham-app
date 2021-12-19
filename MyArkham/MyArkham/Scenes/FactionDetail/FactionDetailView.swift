@@ -10,16 +10,34 @@ import SwiftUI
 struct FactionDetailView: View {
     
     @StateObject var viewModel: FactionDetailViewModel
+    @State private var selection = "all"
     
     var body: some View {
-        
-        // TODO: Add CardType filter
         
         VStack(alignment: .center) {
             
             Image("logo")
                 .resizable()
                 .frame(width: 300, height: 100, alignment: .center)
+            
+            HStack {
+                
+                Spacer()
+                
+                Text("Filter by Card Type: ")
+                
+                Picker("Filter by Card Type", selection: $selection) {
+                                            
+                    ForEach (CardType.allCases, id: \.self, content: { type in
+                        
+                        Text(type.rawValue)
+                            .tag(type.rawValue)
+                    })
+                }.onChange(of: selection) { _ in
+                    
+                    viewModel.sortByType(selection)
+                }
+            }.padding([.trailing], 16)
             
             ScrollView {
                 
