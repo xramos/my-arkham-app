@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CardType: String {
+enum CardType: String, CaseIterable {
     
-    case asset, event, skill, treachery, enemy, investigator
+    case asset, event, skill, treachery, enemy, investigator, all
 }

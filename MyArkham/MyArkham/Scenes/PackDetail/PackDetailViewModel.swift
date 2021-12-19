@@ -11,6 +11,7 @@ class PackDetailViewModel: ObservableObject {
     
     // Variables
     
+    private var originalCards: [Card] = []
     public private(set) var pack: Pack
     @Published public private(set) var cards: [Card] = []
     
@@ -24,5 +25,21 @@ class PackDetailViewModel: ObservableObject {
     func getCards() {
         
         cards = GetCardsByPackUseCase().execute(pack: pack)
+        originalCards = cards
+    }
+    
+    func sortByType(_ selection: String) {
+        
+        if selection == CardType.all.rawValue {
+            
+            self.cards = self.originalCards
+            
+        } else {
+            
+            self.cards = self.originalCards.filter { card in
+                
+                card.typeCode == selection
+            }
+        }
     }
 }
