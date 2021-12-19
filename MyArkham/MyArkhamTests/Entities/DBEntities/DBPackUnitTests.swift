@@ -23,7 +23,8 @@ class DBPackUnitTests: XCTestCase {
     func testConvertToEntity() {
         
         // Given
-        let dbPack = DBPack(id: "1", name: "name",
+        let dbPack = DBPack(id: "1",
+                            name: "name",
                             code: "code",
                             position: 1,
                             cyclePosition: 1,
