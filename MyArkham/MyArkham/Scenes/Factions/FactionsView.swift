@@ -15,10 +15,6 @@ struct FactionsView: View {
         
         VStack(alignment: .center) {
             
-            Image("logo")
-                .resizable()
-                .frame(width: 300, height: 100, alignment: .center)
-            
             ScrollView {
                 
                 ForEach(viewModel.factions) { faction in
@@ -30,11 +26,16 @@ struct FactionsView: View {
                     .buttonStyle(PlainButtonStyle())
                 }
             }
+            .background(Color.white)
+            .cornerRadius(10)
+            .padding([.leading, .trailing], 16)
             
         }.onAppear {
             
             viewModel.getCards()
         }
+        .background(Color.clear)
+        .withBackground(showLogo: true)
         .withProgressView(showProgressView: viewModel.showProgressView)
     }
 }

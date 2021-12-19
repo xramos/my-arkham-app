@@ -16,28 +16,30 @@ struct FactionDetailView: View {
         
         VStack(alignment: .center) {
             
-            Image("logo")
-                .resizable()
-                .frame(width: 300, height: 100, alignment: .center)
-            
             HStack {
                 
                 Spacer()
                 
-                Text("Filter by Card Type: ")
-                
-                Picker("Filter by Card Type", selection: $selection) {
-                                            
-                    ForEach (CardType.allCases, id: \.self, content: { type in
-                        
-                        Text(type.rawValue)
-                            .tag(type.rawValue)
-                    })
-                }.onChange(of: selection) { _ in
+                HStack {
                     
-                    viewModel.sortByType(selection)
+                    Text("Filter by Card Type: ")
+                    
+                    Picker("Filter by Card Type", selection: $selection) {
+                        
+                        ForEach (CardType.allCases, id: \.self, content: { type in
+                            
+                            Text(type.rawValue)
+                                .tag(type.rawValue)
+                        })
+                    }.onChange(of: selection) { _ in
+                        
+                        viewModel.sortByType(selection)
+                    }
                 }
-            }.padding([.trailing], 16)
+                .background(Color.white)
+                .cornerRadius(10)
+                .padding([.leading, .trailing], 16)
+            }
             
             ScrollView {
                 
@@ -46,11 +48,16 @@ struct FactionDetailView: View {
                     CardCellView(card: card)
                 }
             }
+            .background(Color.white)
+            .cornerRadius(10)
+            .padding([.leading, .trailing], 16)
             
         }.onAppear {
             
             viewModel.getCards()
         }
+        .background(Color.clear)
+        .withBackground(showLogo: true)
     }
 }
 

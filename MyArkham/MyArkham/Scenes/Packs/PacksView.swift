@@ -13,33 +13,22 @@ struct PacksView: View {
     
     var body: some View {
         
-        ZStack {
+        VStack {
             
-            Color.accentColor
-                .ignoresSafeArea()
-            
-            VStack {
+            ScrollView {
                 
-                Image("logo")
-                    .resizable()
-                    .frame(width: 300, height: 100, alignment: .center)
-                
-                ScrollView {
+                ForEach(viewModel.packs) { pack in
                     
-                    ForEach(viewModel.packs) { pack in
+                    NavigationLink(destination: PackDetailView(viewModel: PackDetailViewModel(pack: pack))) {
                         
-                        NavigationLink(destination: PackDetailView(viewModel: PackDetailViewModel(pack: pack))) {
-                            
-                            PackCellView(pack: pack)
-                        }
-                        .buttonStyle(PlainButtonStyle())
+                        PackCellView(pack: pack)
                     }
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .background(Color.white)
-                .cornerRadius(10)
-                .padding([.leading, .trailing], 16)
             }
-            .background(Color.clear)
+            .background(Color.white)
+            .cornerRadius(10)
+            .padding([.leading, .trailing], 16)
             
         }.onAppear {
             
@@ -47,6 +36,8 @@ struct PacksView: View {
         }
         .navigationBarTitle("")
         .navigationTitle("")
+        .background(Color.clear)
+        .withBackground(showLogo: true)
         .withProgressView(showProgressView: viewModel.showProgressView)
     }
 }
