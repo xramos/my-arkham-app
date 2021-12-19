@@ -5,12 +5,14 @@ App that uses arkhamdb information to obtain packs, factions and cards for Arkha
 - XCode
 - SwiftUI
 - Combine
-- CoreData
+- Realm
+- Lottie
 
 ## Requirements 📋
 
 - Create a Swift App
-- Get Pack, Faction and Cards from akhamdb
+- Get Packs, Factions and Cards from akhamdb
 - Store information on DB and retry requests max 7 days of difference
 - Show Cards for a specific pack
-- Show Cards and filter them by faction
+- Show Cards for a specific faction
+- Show Cards and filter them by card type
