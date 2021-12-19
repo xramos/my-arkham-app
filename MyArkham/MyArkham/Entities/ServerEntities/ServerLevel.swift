@@ -14,7 +14,8 @@ struct ServerLevel: Codable {
     
     func convertToEntity() -> Level {
         
-        return Level(min: min,
+        return Level(id: UUID().uuidString,
+                     min: min,
                      max: max)
     }
 }

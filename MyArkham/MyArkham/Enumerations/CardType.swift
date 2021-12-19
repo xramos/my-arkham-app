@@ -9,5 +9,5 @@ import Foundation
 
 enum CardType: String {
     
-    case asset, event, skill, treachery, enemy
+    case asset, event, skill, treachery, enemy, investigator
 }

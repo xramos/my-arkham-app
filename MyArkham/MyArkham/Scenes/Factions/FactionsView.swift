@@ -21,11 +21,6 @@ struct FactionsView: View {
             
             ScrollView {
                 
-                if viewModel.showProgressView {
-                    
-                    ProgressView("Loading")
-                }
-                
                 ForEach(viewModel.factions) { faction in
                     
                     NavigationLink(destination: FactionDetailView(viewModel: FactionDetailViewModel(faction: faction))) {
@@ -40,6 +35,7 @@ struct FactionsView: View {
             
             viewModel.getCards()
         }
+        .withProgressView(showProgressView: viewModel.showProgressView)
     }
 }
 

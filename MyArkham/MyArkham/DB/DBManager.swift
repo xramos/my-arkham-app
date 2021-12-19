@@ -6,135 +6,148 @@
 //
 
 import Foundation
-import CoreData
+import Security
+import RealmSwift
+import CryptoKit
 
 class DBManager: Persistence {
     
     // MARK: - Properties
     
-    let coreDataStack: CoreDataStack
+    private var storageType: StorageType = .inStorage
+    private let keychainIdentifierString: String
+    
+    private var configuration: Realm.Configuration!
+    private var realmMainThread: Realm!
+    private var realm: Realm {
+        // Distinc mainThreadRealm or create new ones
+        if Thread.isMainThread {
+            if let realm = realmMainThread {
+                return realm
+            } else {
+                realmMainThread = createRealm()
+                return realmMainThread
+            }
+        } else {
+            return createRealm()
+        }
+    }
     
     // MARK: - Methods
     
-    init(coreDataStack: CoreDataStack = CoreDataStack.sharedInstance) {
+    public init(storageType: StorageType = .inStorage) {
         
-        self.coreDataStack = coreDataStack
+        self.storageType = storageType
+        self.keychainIdentifierString = "xramos.MyArkham.realm"
     }
+    
+    public func configureDB() {
+        
+        switch storageType {
+        case .inStorage:
+            createConfiguration()
+        case .inMemory(let identifier):
+            createMemoryConfiguration(identifier: identifier)
+        }
+    }
+    
+    public class func removeDatabase() {
+        
+        guard let urlDocumentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            fatalError("RealmManager: Document path not found")
+        }
+        
+        do {
+            
+            // Delete Realm DB in Documents
+            let realmInDocuments = urlDocumentsPath.appendingPathComponent("default.realm")
+            if FileManager.default.fileExists(atPath: realmInDocuments.path) {
+                try FileManager.default.removeItem(at: realmInDocuments)
+                print("RealmManager: Realm Database FOUND in \(realmInDocuments.path) - Removed!")
+            } else {
+                print("RealmManager: Realm Database not found in \(realmInDocuments.path)")
+            }
+            
+            let realmLockInDocuments = urlDocumentsPath.appendingPathComponent("default.realm.lock")
+            if FileManager.default.fileExists(atPath: realmLockInDocuments.path) {
+                try FileManager.default.removeItem(at: realmLockInDocuments)
+                print("RealmManager: Realm Database lock FOUND in \(realmLockInDocuments.path) - Removed!")
+            } else {
+                print("RealmManager: Realm Database lock not found in \(realmLockInDocuments.path)")
+            }
+            
+            // Delete Realm DB in Realm dir
+            let urlRealmDirectory = urlDocumentsPath.appendingPathComponent("Realm")
+            
+            if FileManager.default.fileExists(atPath: urlRealmDirectory.path) {
+                try FileManager.default.removeItem(at: urlRealmDirectory)
+                print("RealmManager: Realm Database FOUND in \(urlRealmDirectory.path) - Removed!")
+            } else {
+                print("RealmManager: Realm Database not found in \(urlRealmDirectory.path)")
+            }
+        } catch {
+            fatalError("RealmManager: Failed to remove the database. Error: \(error)")
+        }
+    }
+    
+    // MARK: - Pack Methods
     
     func savePack(pack: Pack) {
         
-        let dbPack = DBPack(context: coreDataStack.managedContext)
+        let dbPack = DBPack(id: pack.id,
+                            name: pack.name,
+                            code: pack.code,
+                            position: pack.position,
+                            cyclePosition: pack.cyclePosition,
+                            available: pack.available,
+                            total: pack.total)
         
-        dbPack.id = Int64(pack.id)
-        dbPack.name = pack.name
-        dbPack.code = pack.code
-        dbPack.available = pack.available
-        dbPack.position = Int16(pack.position)
-        dbPack.cyclePosition = Int16(pack.cyclePosition)
-        dbPack.total = Int16(pack.total)
-        
-        coreDataStack.saveContext()
+        _ = save(dbPack)
     }
     
     func removePack(pack: Pack) {
         
-        let packId = Int64(pack.id)
+        let dbPack = pack.convertToDBEntity()
         
-        let fetchRequest = NSFetchRequest<DBPack>(entityName: "DBPack")
-        fetchRequest.predicate = NSPredicate(format: "id==\(packId)")
-        
-        do {
-            
-            let dbPacks = try coreDataStack.managedContext.fetch(fetchRequest)
-            
-            for dbPack in dbPacks {
-                coreDataStack.managedContext.delete(dbPack)
-            }
-            
-            coreDataStack.saveContext()
-            
-        } catch let error as NSError {
-            
-            print("Could not fetch for delete. \(error), \(error.userInfo)")
-        }
+        _ = remove(dbPack)
     }
     
     func getPacks() -> [Pack] {
         
-        var packs: [Pack] = []
-        
-        let fetchRequest = NSFetchRequest<DBPack>(entityName: "DBPack")
-        
-        do {
-            
-            let dbPacks = try coreDataStack.managedContext.fetch(fetchRequest)
-            
-            for dbPack in dbPacks {
-                let pack = dbPack.convertToEntity()
-                packs.append(pack)
-            }
-            
-        } catch let error as NSError {
-            
-            print("Could not fetch. \(error), \(error.userInfo)")
+        var packs = [Pack]()
+        for result in realm.objects(DBPack.self).sorted(byKeyPath: "available", ascending: true) {
+            let pack = result.convertToEntity()
+            packs.append(pack)
         }
         
         return packs
     }
     
+    // MARK: - Faction Methods
+    
     func saveFaction(faction: Faction) {
         
-        let dbFaction = DBFaction(context: coreDataStack.managedContext)
+        let dbFaction = DBFaction(id: faction.id,
+                                  code: faction.code,
+                                  name: faction.name,
+                                  isPrimary: faction.isPrimary)
         
-        dbFaction.id = faction.id
-        dbFaction.name = faction.name
-        dbFaction.code = faction.code
-        dbFaction.isPrimary = faction.isPrimary
-        
-        coreDataStack.saveContext()
+        _ = save(dbFaction)
     }
     
     func removefaction(faction: Faction) {
         
-        let factionId = faction.id
+        let dbFaction = faction.convertToDBEntity()
         
-        let fetchRequest = NSFetchRequest<DBFaction>(entityName: "DBFaction")
-        fetchRequest.predicate = NSPredicate(format: "id==\(factionId)")
-        
-        do {
-            
-            let dbFactions = try coreDataStack.managedContext.fetch(fetchRequest)
-            
-            for dbFaction in dbFactions {
-                coreDataStack.managedContext.delete(dbFaction)
-            }
-            
-            coreDataStack.saveContext()
-            
-        } catch let error as NSError {
-            
-            print("Could not fetch for delete. \(error), \(error.userInfo)")
-        }
+        _ = remove(dbFaction)
     }
     
     func getFactions() -> [Faction] {
         
         var factions: [Faction] = []
-        
-        let fetchRequest = NSFetchRequest<DBFaction>(entityName: "DBFaction")
-        
-        do {
-            
-            let dbFactions = try coreDataStack.managedContext.fetch(fetchRequest)
-            
-            for dbFaction in dbFactions {
-                let faction = dbFaction.convertToEntity()
-                factions.append(faction)
-            }
-            
-        } catch let error as NSError {
-            
-            print("Could not fetch. \(error), \(error.userInfo)")
+        for result in realm.objects(DBFaction.self).sorted(byKeyPath: "name", ascending: true) {
+            let faction = result.convertToEntity()
+            factions.append(faction)
         }
         
         return factions
@@ -144,122 +157,18 @@ class DBManager: Persistence {
     
     func saveCard(card: Card) {
         
-        let context = coreDataStack.managedContext
+        let dbCard = card.convertToDBEntity()
         
-        var dbDeckOptions: [DBDeckOption] = []
-        
-        if let deckOptions = card.deckOptions {
-            
-            for deckOption in deckOptions {
-
-                let factions = deckOption.faction?.joined(separator: ",")
-                let tr = deckOption.trait?.joined(separator: ",")
-                let use = deckOption.uses?.joined(separator: ",")
-                
-                let dbDeckOption = DBDeckOption(context: context)
-                dbDeckOption.faction = factions
-                dbDeckOption.trait = tr
-                dbDeckOption.uses = use
-                dbDeckOption.limit = Int16(deckOption.limit ?? 0)
-                dbDeckOption.not = deckOption.not ?? false
-                
-                if let level = deckOption.level {
-                    
-                    let dbLevel = DBLevel(context: context)
-                    dbLevel.min = Int16(level.min)
-                    dbLevel.max = Int16(level.max)
-                
-                    dbDeckOption.level = dbLevel
-                }
-                
-                if let atleast = deckOption.atleast {
-                    
-                    let dbAtLeast = DBAtLeast(context: context)
-                    dbAtLeast.factions = Int16(atleast.factions)
-                    dbAtLeast.min = Int16(atleast.min)
-                    
-                    dbDeckOption.atleast = dbAtLeast
-                }
-                
-                dbDeckOptions.append(dbDeckOption)
-            }
-        }
-        
-        let duplicated = card.duplicatedBy?.joined(separator: ",")
-        
-        let dbCard = DBCard(context: context)
-        dbCard.id = card.id
-        dbCard.code = card.code
-        dbCard.name = card.name
-        dbCard.realName = card.realName
-        dbCard.subname = card.subname
-        dbCard.text = card.text
-        dbCard.realText = card.realText
-        dbCard.packCode = card.packCode
-        dbCard.packName = card.packName
-        dbCard.factionCode = card.factionCode
-        dbCard.factionName = card.factionName
-        dbCard.typeCode = card.typeCode
-        dbCard.typeName = card.typeName
-        dbCard.subtypeCode = card.subtypeCode
-        dbCard.subtypeName = card.subtypeName
-        dbCard.position = Int64(card.position)
-        dbCard.exceptional = card.exceptional
-        dbCard.cost = Int16(card.cost ?? 0)
-        dbCard.xp = Int16(card.xp ?? 0)
-        dbCard.quantity = Int16(card.quantity)
-        dbCard.skillWillpower = Int16(card.skillWillpower ?? 0)
-        dbCard.skillIntelect = Int16(card.skillIntelect ?? 0)
-        dbCard.skillCombat = Int16(card.skillCombat ?? 0)
-        dbCard.skillAgility = Int16(card.skillAgility ?? 0)
-        dbCard.skillWild = Int16(card.skillWild ?? 0)
-        dbCard.healthPerInvestigator = card.healthPerInvestigator
-        dbCard.health = Int16(card.health ?? 0)
-        dbCard.sanity = Int16(card.sanity ?? 0)
-        dbCard.deckLimit = Int16(card.deckLimit ?? 0)
-        dbCard.slot = card.slot
-        dbCard.realSlot = card.realSlot
-        dbCard.traits = card.traits
-        dbCard.realTraits = card.realTraits
-        
-        if dbDeckOptions.count > 0 {
-            dbCard.deckOptions?.addingObjects(from: dbDeckOptions)
-        }
-        
-        dbCard.flavor = card.flavor
-        dbCard.isUnique = card.isUnique
-        dbCard.permanent = card.permanent
-        dbCard.doubleSided = card.doubleSided
-        dbCard.backText = card.backText
-        dbCard.backFlavor = card.backFlavor
-        dbCard.imagesrc = card.imagesrc
-        dbCard.backimagescr = card.backimagesrc
-        dbCard.duplicatedBy = duplicated
-        
-        context.perform { [self] in
-            
-            self.coreDataStack.saveContext()
-        }
+        _ = save(dbCard)
     }
     
     func getCards() -> [Card] {
         
         var cards: [Card] = []
         
-        let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
-        
-        do {
-            
-            let dbCards = try coreDataStack.managedContext.fetch(fetchRequest)
-            
-            for dbCard in dbCards {
-                let dbCard = dbCard.convertToEntity()
-                cards.append(dbCard)
-            }
-            
-        } catch let error as NSError {
-            
-            print("Could not fetch. \(error), \(error.userInfo)")
+        for result in realm.objects(DBCard.self) {
+            let card = result.convertToEntity()
+            cards.append(card)
         }
         
         return cards
@@ -271,21 +180,11 @@ class DBManager: Persistence {
         
         let packCode = pack.code
         
-        let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
-        fetchRequest.predicate = NSPredicate(format: "packCode == %@", packCode)
+        let predicate = NSPredicate(format: "packCode == %@", packCode)
         
-        do {
-            
-            let dbCards = try coreDataStack.managedContext.fetch(fetchRequest)
-            
-            for dbCard in dbCards {
-                let dbCard = dbCard.convertToEntity()
-                cards.append(dbCard)
-            }
-            
-        } catch let error as NSError {
-            
-            print("Could not fetch. \(error), \(error.userInfo)")
+        for result in realm.objects(DBCard.self).filter(predicate) {
+            let card = result.convertToEntity()
+            cards.append(card)
         }
         
         return cards
@@ -295,25 +194,116 @@ class DBManager: Persistence {
         
         var cards: [Card] = []
         
-        let fCode = faction.code
+        let factionCode = faction.code
         
-        let fetchRequest = NSFetchRequest<DBCard>(entityName: "DBCard")
-        fetchRequest.predicate = NSPredicate(format: "factionCode == %@", fCode)
+        let predicate = NSPredicate(format: "factionCode == %@", factionCode)
         
-        do {
-            
-            let dbCards = try coreDataStack.managedContext.fetch(fetchRequest)
-            
-            for dbCard in dbCards {
-                let dbCard = dbCard.convertToEntity()
-                cards.append(dbCard)
-            }
-            
-        } catch let error as NSError {
-            
-            print("Could not fetch. \(error), \(error.userInfo)")
+        for result in realm.objects(DBCard.self).filter(predicate) {
+            let card = result.convertToEntity()
+            cards.append(card)
         }
         
         return cards
+    }
+    
+    // MARK: - Helper Methods
+    
+    func save<T>(_ entity: T) -> Bool where T: Object {
+        
+        writeTransactionAndWait(transactions: { () -> Void in
+            
+            realm.add(entity, update: .all)
+            
+        }, completionClosure: { (_) -> Void in})
+        
+        return true
+    }
+    
+    func remove<T>(_ entity: T) -> Bool where T: Object {
+        
+        writeTransactionAndWait(transactions: { () -> Void in
+            
+            realm.delete(entity)
+            
+        }, completionClosure: { (_) -> Void in})
+        
+        return true
+    }
+}
+
+// MARK: - Private Methods
+
+fileprivate extension DBManager {
+    
+    func createConfiguration() {
+        
+        /*#if PRO_ENVIRONMENT && !DEBUG
+            configuration = Realm.Configuration(encryptionKey: getKey(),
+                                                deleteRealmIfMigrationNeeded: true)
+        #else
+            configuration = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
+        #endif*/
+        
+        configuration = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
+        
+        configureDatabasePath()
+    }
+    
+    func createMemoryConfiguration(identifier: String) {
+        
+        configuration = Realm.Configuration(inMemoryIdentifier: identifier,
+                                            deleteRealmIfMigrationNeeded: true)
+    }
+    
+    func createRealm() -> Realm {
+        
+        do {
+            return try Realm(configuration: configuration)
+        } catch {
+            print("RealmManager: Failed to open the database with current configuration: \(error)")
+            exit(0)
+        }
+    }
+    
+    func getKey() -> Data {
+        
+        let data = keychainIdentifierString.data(using: .utf8) ?? Data()
+        let digest = SHA256.hash(data: data)
+        return digest.data
+    }
+    
+    func configureDatabasePath() {
+        
+        guard let realmFilename = Realm.Configuration.defaultConfiguration.fileURL?.lastPathComponent else {
+            fatalError("RealmManager: Default Configuration not working")
+        }
+        guard let urlDocumentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            fatalError("RealmManager: Document path not found")
+        }
+        let urlRealmDirectory = urlDocumentsPath.appendingPathComponent("Realm")
+        let urlRealmDB = urlRealmDirectory.appendingPathComponent(realmFilename)
+        
+        if FileManager.default.fileExists(atPath: urlRealmDirectory.path) == false {
+            guard let _ = try? FileManager.default.createDirectory(at: urlRealmDirectory, withIntermediateDirectories: true, attributes: nil) else {
+                fatalError("RealmManager: Can't create directory")
+            }
+        }
+        
+        configuration.fileURL = urlRealmDB
+        
+        print("RealmManager: Realm database path: \(urlRealmDB)")
+    }
+    
+    func writeTransactionAndWait(transactions: (() -> Void), completionClosure: ((Realm.Error?) -> Void)) {
+        do {
+            try realm.write({ () -> Void in
+                transactions()
+            })
+            completionClosure(nil)
+        } catch {
+            let error = NSError(domain: "MyArkham-Realm-Error",
+                                             code: 1, userInfo: [NSLocalizedDescriptionKey: "Realm Problem"]) as? Realm.Error
+            completionClosure(error)
+        }
     }
 }

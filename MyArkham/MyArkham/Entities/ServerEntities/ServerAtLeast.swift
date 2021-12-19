@@ -14,7 +14,8 @@ struct ServerAtLeast: Codable {
     
     func convertToEntity() -> AtLeast {
         
-        return AtLeast(factions: factions,
+        return AtLeast(id: UUID().uuidString,
+                       factions: factions,
                        min: min)
     }
 }

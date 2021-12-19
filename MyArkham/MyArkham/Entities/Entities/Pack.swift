@@ -9,11 +9,22 @@ import Foundation
 
 struct Pack: Identifiable {
     
-    let id: Int
+    let id: String
     let name: String
     let code: String
     let position: Int
     let cyclePosition: Int
     let available: String
     let total: Int
+    
+    func convertToDBEntity() -> DBPack {
+        
+        return DBPack(id: id,
+                      name: name,
+                      code: code,
+                      position: position,
+                      cyclePosition: cyclePosition,
+                      available: available,
+                      total: total)
+    }
 }

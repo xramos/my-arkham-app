@@ -23,27 +23,24 @@ class DBPackUnitTests: XCTestCase {
     func testConvertToEntity() {
         
         // Given
-        let dbPack = DBPack(context: TestCoreDataStack().managedContext)
-        
-        dbPack.id = Int64(1)
-        dbPack.name = "name"
-        dbPack.code = "code"
-        dbPack.available = "available"
-        dbPack.position = Int16(1)
-        dbPack.cyclePosition = Int16(1)
-        dbPack.total = Int16(40)
+        let dbPack = DBPack(id: "1", name: "name",
+                            code: "code",
+                            position: 1,
+                            cyclePosition: 1,
+                            available: "available",
+                            total: 40)
         
         // When
         let pack = dbPack.convertToEntity()
         
         // Then
         XCTAssertNotNil(pack)
-        XCTAssertEqual(dbPack.id, Int64(pack.id))
+        XCTAssertEqual(dbPack.id, pack.id)
         XCTAssertEqual(dbPack.name, pack.name)
         XCTAssertEqual(dbPack.code, pack.code)
         XCTAssertEqual(dbPack.available, pack.available)
-        XCTAssertEqual(dbPack.position, Int16(pack.position))
-        XCTAssertEqual(dbPack.cyclePosition, Int16(pack.cyclePosition))
-        XCTAssertEqual(dbPack.total, Int16(pack.total))
+        XCTAssertEqual(dbPack.position, pack.position)
+        XCTAssertEqual(dbPack.cyclePosition, pack.cyclePosition)
+        XCTAssertEqual(dbPack.total, pack.total)
     }
 }

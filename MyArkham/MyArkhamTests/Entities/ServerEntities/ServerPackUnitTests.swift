@@ -35,7 +35,6 @@ class ServerPackUnitTests: XCTestCase {
         let pack = serverPack.convertToEntity()
         
         // Then
-        XCTAssertEqual(pack.id, serverPack.id)
         XCTAssertEqual(pack.name, serverPack.name)
         XCTAssertEqual(pack.code, serverPack.code)
         XCTAssertEqual(pack.position, serverPack.position)

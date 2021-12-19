@@ -9,11 +9,12 @@ import Foundation
 
 class LocalPackDataSource {
     
-    private let dbManager: Persistence
+    private let dbManager: DBManager
     
-    init(dbManager: Persistence = DBManager()) {
+    init(dbManager: DBManager = DBManager()) {
         
         self.dbManager = dbManager
+        self.dbManager.configureDB()
     }
     
     func savePack(pack: Pack) {

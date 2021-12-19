@@ -13,4 +13,12 @@ struct Faction: Identifiable {
     let code: String
     let name: String
     let isPrimary: Bool
+    
+    func convertToDBEntity() -> DBFaction {
+        
+        return DBFaction(id: id,
+                         code: code,
+                         name: name,
+                         isPrimary: isPrimary)
+    }
 }

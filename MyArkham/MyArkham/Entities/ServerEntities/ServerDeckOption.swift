@@ -19,7 +19,8 @@ struct ServerDeckOption: Codable {
     
     func convertToEntity() -> DeckOption {
         
-        return DeckOption(faction: faction,
+        return DeckOption(id: UUID().uuidString,
+                          faction: faction,
                           level: level?.convertToEntity(),
                           trait: trait,
                           uses: uses,

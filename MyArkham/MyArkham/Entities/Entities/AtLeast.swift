@@ -9,6 +9,14 @@ import Foundation
 
 struct AtLeast {
     
+    let id: String
     let factions: Int
     let min: Int
+    
+    func convertToDBEntity() -> DBAtLeast {
+        
+        return DBAtLeast(id: id,
+                         factions: factions,
+                         min: min)
+    }
 }

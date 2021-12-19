@@ -10,14 +10,16 @@ import SwiftUI
 @main
 struct MyArkhamApp: App {
 
+    @UIApplicationDelegateAdaptor(DelegateAdaptor.self) var appDelegate: DelegateAdaptor
+    
     var body: some Scene {
         
         WindowGroup {
             
             NavigationView {
             
-                //FactionsView(viewModel: FactionsViewModel())
-                PacksView(viewModel: PacksViewModel())
+                FactionsView(viewModel: FactionsViewModel())
+                //PacksView(viewModel: PacksViewModel())
             }
         }
     }

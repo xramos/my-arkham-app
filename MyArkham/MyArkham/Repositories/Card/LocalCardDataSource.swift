@@ -9,11 +9,12 @@ import Foundation
 
 class LocalCardDataSource {
     
-    private let dbManager: Persistence
+    private let dbManager: DBManager
     
-    init(dbManager: Persistence = DBManager()) {
+    init(dbManager: DBManager = DBManager()) {
         
         self.dbManager = dbManager
+        dbManager.configureDB()
     }
     
     func saveCard(card: Card) {

@@ -52,4 +52,60 @@ struct Card: Identifiable {
     let imagesrc: String?
     let backimagesrc: String?
     let duplicatedBy: [String]?
+    
+    func convertToDBEntity() -> DBCard {
+        
+        let dbCard = DBCard(id: id,
+                            code: code,
+                            name: name,
+                            realName: realName,
+                            subname: subname,
+                            text: text,
+                            realText: realText,
+                            packCode: packCode,
+                            packName: packName,
+                            factionCode: factionCode,
+                            factionName: factionName,
+                            typeCode: typeCode,
+                            typeName: typeName,
+                            subtypeCode: subtypeCode,
+                            subtypeName: subtypeName,
+                            position: position,
+                            exceptional: exceptional,
+                            cost: cost,
+                            xp: xp,
+                            quantity: quantity,
+                            skillWillpower: skillWillpower,
+                            skillIntelect: skillIntelect,
+                            skillCombat: skillCombat,
+                            skillAgility: skillAgility,
+                            skillWild: skillWild,
+                            healthPerInvestigator: healthPerInvestigator,
+                            health: health,
+                            sanity: sanity,
+                            deckLimit: deckLimit,
+                            slot: slot,
+                            realSlot: realSlot,
+                            traits: traits,
+                            realTraits: realTraits,
+                            flavor: flavor,
+                            isUnique: isUnique,
+                            permanent: permanent,
+                            doubleSided: doubleSided,
+                            backText: backText,
+                            backFlavor: backFlavor,
+                            imagesrc: imagesrc,
+                            backimagesrc: backimagesrc,
+                            duplicatedBy: duplicatedBy)
+        
+        if let deckOptions = deckOptions {
+            
+            for deckOption in deckOptions {
+                let dbDeckOption = deckOption.convertToDBEntity()
+                dbCard.deckOptions.append(dbDeckOption)
+            }
+        }
+        
+        return dbCard
+    }
 }

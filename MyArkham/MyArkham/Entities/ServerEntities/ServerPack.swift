@@ -20,7 +20,7 @@ struct ServerPack: Codable {
     
     func convertToEntity() -> Pack {
         
-        return Pack(id: id,
+        return Pack(id: UUID().uuidString,
                     name: name,
                     code: code,
                     position: position,

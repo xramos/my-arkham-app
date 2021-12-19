@@ -24,12 +24,6 @@ struct PacksView: View {
                     .resizable()
                     .frame(width: 300, height: 100, alignment: .center)
                 
-                if viewModel.showProgressView {
-                    
-                    ProgressView("Loading")
-                        .background(Color.white)
-                }
-                
                 ScrollView {
                     
                     ForEach(viewModel.packs) { pack in
@@ -53,6 +47,7 @@ struct PacksView: View {
         }
         .navigationBarTitle("")
         .navigationTitle("")
+        .withProgressView(showProgressView: viewModel.showProgressView)
     }
 }
 

@@ -40,7 +40,7 @@ struct PackDetailView_Previews: PreviewProvider {
     
     static var previews: some View {
         
-        let pack = Pack(id: 1,
+        let pack = Pack(id: "1",
                         name: "name",
                         code: "code",
                         position: 0,

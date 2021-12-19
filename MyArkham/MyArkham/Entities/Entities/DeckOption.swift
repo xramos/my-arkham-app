@@ -9,6 +9,7 @@ import Foundation
 
 struct DeckOption {
     
+    let id: String
     let faction: [String]?
     let level: Level?
     let trait: [String]?
@@ -16,4 +17,16 @@ struct DeckOption {
     let limit: Int?
     let atleast: AtLeast?
     let not: Bool?
+    
+    func convertToDBEntity() -> DBDeckOption {
+        
+        return DBDeckOption(id: id,
+                            faction: faction,
+                            trait: trait,
+                            uses: uses,
+                            limit: limit,
+                            not: not,
+                            level: level?.convertToDBEntity(),
+                            atleast: atleast?.convertToDBEntity())
+    }
 }
