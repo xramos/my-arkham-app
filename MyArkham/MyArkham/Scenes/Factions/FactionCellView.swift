@@ -20,6 +20,8 @@ struct FactionCellView: View {
         
         VStack {
             
+            Spacer()
+            
             HStack {
                 
                 Text(faction?.name ?? "")
@@ -27,10 +29,12 @@ struct FactionCellView: View {
                 Spacer()
             }
             
-            Divider()
+            Spacer()
+            
+            Divider().frame(height: 1)
         }
         .padding([.leading, .trailing], 16)
-        .frame(height: 44)
+        .frame(height: 45)
     }
 }
 
