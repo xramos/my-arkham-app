@@ -32,18 +32,8 @@ struct TabBar: View {
                 }
                 .tag(Tab.factions)
         }
-        .navigationTitle(getNavBarTitle(for: activeTab))
-        .navigationBarTitleDisplayMode(.large)
-    }
-    
-    func getNavBarTitle(for tabItemType: Tab) -> String {
-        
-        switch tabItemType {
-        case .packs:
-            return "Packs"
-        case .factions:
-            return "Factions"
-        }
+        .navigationBarTitle("", displayMode: .inline)
+        .navigationBarHidden(true)
     }
 }
 

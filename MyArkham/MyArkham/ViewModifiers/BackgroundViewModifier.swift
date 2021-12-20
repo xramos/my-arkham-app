@@ -26,6 +26,7 @@ struct BackgroundViewModifier: ViewModifier {
                     Image("logo")
                         .resizable()
                         .frame(width: 300, height: 100, alignment: .center)
+                        .padding([.top], 16)
                 }
                 
                 content

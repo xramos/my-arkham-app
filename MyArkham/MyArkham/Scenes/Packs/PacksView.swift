@@ -29,13 +29,12 @@ struct PacksView: View {
             .background(Color.white)
             .cornerRadius(10)
             .padding([.leading, .trailing], 16)
+            .padding([.bottom], 16)
             
         }.onAppear {
             
             viewModel.getCards()
         }
-        .navigationBarTitle("")
-        .navigationTitle("")
         .background(Color.clear)
         .withBackground(showLogo: true)
         .withProgressView(showProgressView: viewModel.showProgressView)
