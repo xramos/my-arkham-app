@@ -16,7 +16,7 @@ struct BackgroundViewModifier: ViewModifier {
         
         ZStack {
             
-            Color.accentColor
+            Color("launchScreenBackground")
                 .ignoresSafeArea()
             
             VStack {

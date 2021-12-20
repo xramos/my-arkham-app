@@ -18,8 +18,7 @@ struct MyArkhamApp: App {
             
             NavigationView {
             
-                FactionsView(viewModel: FactionsViewModel())
-                //PacksView(viewModel: PacksViewModel())
+                TabBar()
             }
         }
     }
