@@ -109,7 +109,11 @@ class DBManager: Persistence {
         
         let dbPack = pack.convertToDBEntity()
         
-        _ = remove(dbPack)
+        writeTransactionAndWait(transactions: { () -> Void in
+            
+            realm.delete(realm.objects(DBPack.self).filter("id=%@", dbPack.id))
+            
+        }, completionClosure: { (_) -> Void in})
     }
     
     func getPacks() -> [Pack] {
@@ -139,7 +143,11 @@ class DBManager: Persistence {
         
         let dbFaction = faction.convertToDBEntity()
         
-        _ = remove(dbFaction)
+        writeTransactionAndWait(transactions: { () -> Void in
+            
+            realm.delete(realm.objects(DBFaction.self).filter("id=%@", dbFaction.id))
+            
+        }, completionClosure: { (_) -> Void in})
     }
     
     func getFactions() -> [Faction] {
@@ -204,30 +212,6 @@ class DBManager: Persistence {
         }
         
         return cards
-    }
-    
-    // MARK: - Helper Methods
-    
-    func save<T>(_ entity: T) -> Bool where T: Object {
-        
-        writeTransactionAndWait(transactions: { () -> Void in
-            
-            realm.add(entity, update: .all)
-            
-        }, completionClosure: { (_) -> Void in})
-        
-        return true
-    }
-    
-    func remove<T>(_ entity: T) -> Bool where T: Object {
-        
-        writeTransactionAndWait(transactions: { () -> Void in
-            
-            realm.delete(entity)
-            
-        }, completionClosure: { (_) -> Void in})
-        
-        return true
     }
 }
 
@@ -305,5 +289,16 @@ fileprivate extension DBManager {
                                              code: 1, userInfo: [NSLocalizedDescriptionKey: "Realm Problem"]) as? Realm.Error
             completionClosure(error)
         }
+    }
+    
+    func save<T>(_ entity: T) -> Bool where T: Object {
+        
+        writeTransactionAndWait(transactions: { () -> Void in
+            
+            realm.add(entity, update: .all)
+            
+        }, completionClosure: { (_) -> Void in})
+        
+        return true
     }
 }
