@@ -1,6 +1,8 @@
 # My Arkham
 App that uses arkhamdb information to obtain packs, factions and cards for Arkham Horror LCG
 
+Under construction
+
 ## Built with 🔨
 - XCode
 - SwiftUI
